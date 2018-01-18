@@ -20,4 +20,4 @@
 id_rsa*
 node_modules
 secrets.auto.tfvars
-
+logs/*

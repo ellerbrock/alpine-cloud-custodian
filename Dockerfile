@@ -3,29 +3,29 @@
 # GitHub:  https://github.com/ellerbrock
 # Twitter: https://twitter.com/frapsoft
 # Docker:  https://hub.docker.com/u/ellerbrock
-# Quay:    https://quay.io/user/ellerbrock
 
-FROM alpine:3.7
+FROM python:2.7-alpine
 
-LABEL maintainer "Maik Ellerbrock <opensource@frapsoft.com>"
+LABEL com.frapsoft.maintainer="Maik Ellerbrock" \
+      com.frapsoft.version="0.0.1"
 
 ARG SERVICE_USER
 ARG SERVICE_HOME
 
-ENV VERSION 0.0.1
-
-ENV SERVICE_USER ${SERVICE_USER:-app}
-ENV SERVICE_HOME ${SERVICE_HOME:-/home/${SERVICE_USER}}
-
+ENV SERVICE_USER ${SERVICE_USER:-custodian}
+ENV SERVICE_HOME ${SERVICE_HOME:-/${SERVICE_USER}}
 RUN \
   adduser -h ${SERVICE_HOME} -s /sbin/nologin -u 1000 -D ${SERVICE_USER} && \
-  apk add --no-cache \
-    dumb-init
+  pip install virtualenv && \
+  virtualenv --python=python2 custodian && \
+  . custodian/bin/activate && \
+  pip install c7n
+
+ENV PATH "/${SERVICE_USER}/bin:${PATH}"
 
 USER    ${SERVICE_USER}
 WORKDIR ${SERVICE_HOME}
 VOLUME  ${SERVICE_HOME}
 
-ENTRYPOINT [ "/usr/bin/dumb-init", "--" ]
-CMD [ "" ]
-
+ENTRYPOINT 	[ "custodian" ]
+CMD 		[ "--help" ]

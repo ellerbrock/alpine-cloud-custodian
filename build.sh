@@ -1,8 +1,7 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
-main () {
+function main () {
   local CONTAINER_NAME="ellerbrock/cloud-custodian"
-
   docker build -t ${CONTAINER_NAME} . 
 }
 
